@@ -261,15 +261,17 @@
       </div>
       <!-- Mode -->
       <div class="filter-group" role="group" aria-label="Filter by work mode">
-        <button class="filter-btn active" data-filter="mode" data-value="all"    onclick="setFilter('mode','all',this)">All</button>
-        <button class="filter-btn" data-filter="mode" data-value="remote"  onclick="setFilter('mode','remote',this)">Remote</button>
-        <button class="filter-btn" data-filter="mode" data-value="hybrid"  onclick="setFilter('mode','hybrid',this)">Hybrid</button>
+        <button class="filter-btn active" data-filter="mode" data-value="all"        onclick="setFilter('mode','all',this)">All</button>
+        <button class="filter-btn"        data-filter="mode" data-value="remote"     onclick="setFilter('mode','remote',this)">🌐 Remote</button>
+        <button class="filter-btn"        data-filter="mode" data-value="hybrid-ncr" onclick="setFilter('mode','hybrid-ncr',this)">🏢 Hybrid NCR</button>
+        <button class="filter-btn"        data-filter="mode" data-value="ncr"        onclick="setFilter('mode','ncr',this)">📍 NCR</button>
       </div>
       <!-- Site -->
-      <div class="filter-group" role="group" aria-label="Filter by site">
-        <button class="filter-btn active" data-filter="site" data-value="all"      onclick="setFilter('site','all',this)">All</button>
-        <button class="filter-btn" data-filter="site" data-value="linkedin" onclick="setFilter('site','linkedin',this)">LinkedIn</button>
-        <button class="filter-btn" data-filter="site" data-value="indeed"   onclick="setFilter('site','indeed',this)">Indeed</button>
+      <div class="filter-group" role="group" aria-label="Filter by source">
+        <button class="filter-btn active" data-filter="site" data-value="all"       onclick="setFilter('site','all',this)">All</button>
+        <button class="filter-btn"        data-filter="site" data-value="remotive"  onclick="setFilter('site','remotive',this)">Remotive</button>
+        <button class="filter-btn"        data-filter="site" data-value="jobicy"    onclick="setFilter('site','jobicy',this)">Jobicy</button>
+        <button class="filter-btn"        data-filter="site" data-value="arbeitnow" onclick="setFilter('site','arbeitnow',this)">Arbeitnow</button>
       </div>
       <!-- Sort -->
       <select class="filter-select" onchange="setSort(this.value)" aria-label="Sort jobs">
@@ -422,8 +424,7 @@ function applyFilters() {
   const q = document.getElementById("searchInput").value.toLowerCase();
   let jobs = ALL_JOBS.filter(j => {
     if (filters.score !== "all" && j.match_score < parseInt(filters.score)) return false;
-    if (filters.mode === "remote" && !j.is_remote) return false;
-    if (filters.mode === "hybrid" && j.is_remote) return false;
+    if (filters.mode !== "all" && j.work_mode !== filters.mode) return false;
     if (filters.site !== "all" && j.site !== filters.site) return false;
     if (q && !j.title.toLowerCase().includes(q) && !j.company.toLowerCase().includes(q)) return false;
     return true;
@@ -495,7 +496,8 @@ function renderJobs() {
         <div class="card-meta">
           <span>${esc(job.company)}</span>
           <span>${esc(job.location || "")}</span>
-          <span>${esc(job.site || "")}</span>
+          <span>${workModeBadge(job.work_mode)}</span>
+          <span style="color:var(--muted)">${esc(job.site || "")}</span>
         </div>
         <div class="card-meta">
           ${job.job_type ? `<span>${esc(job.job_type)}</span>` : ""}
@@ -647,6 +649,15 @@ function showToast(msg) {
 
 function esc(s) {
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function workModeBadge(mode) {
+  const map = {
+    "remote":     "🌐 Remote",
+    "hybrid-ncr": "🏢 Hybrid NCR",
+    "ncr":        "📍 NCR",
+  };
+  return map[mode] || mode || "";
 }
 
 // ─── Prep modal ──────────────────────────────────────────────────────────────
