@@ -8,6 +8,9 @@
     },
     "api/score.js": {
       "maxDuration": 10
+    },
+    "api/prep.js": {
+      "maxDuration": 30
     }
   }
 }

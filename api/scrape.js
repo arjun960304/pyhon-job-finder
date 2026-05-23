@@ -41,18 +41,27 @@ function makeId(url) {
   return crypto.createHash("md5").update(url).digest("hex").slice(0, 12);
 }
 
+// Only show jobs posted in the last 30 days
+const THIRTY_DAYS_AGO = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+function isRecent(dateStr) {
+  if (!dateStr) return true;
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) || d >= THIRTY_DAYS_AGO;
+}
+
 // ── Remotive (free, no auth) ──────────────────────────────────────────────────
-// https://remotive.com/api/remote-jobs?search=nodejs&limit=25
+// Queries targeted precisely at Arjun's stack: Node.js · NestJS · Angular · AWS
 const REMOTIVE_QUERIES = [
-  "nodejs nestjs",
-  "nestjs backend",
-  "node.js angular",
-  "backend engineer node",
-  "full stack node typescript",
+  "senior nodejs nestjs",
+  "nestjs backend engineer",
+  "node.js angular typescript",
+  "senior backend engineer node aws",
+  "full stack node.js typescript senior",
+  "backend engineer nestjs aws",
 ];
 
 async function fetchRemotive(query) {
-  const url = `https://remotive.com/api/remote-jobs?search=${encodeURIComponent(query)}&limit=20`;
+  const url = `https://remotive.com/api/remote-jobs?search=${encodeURIComponent(query)}&limit=25`;
   const res = await fetch(url, { signal: AbortSignal.timeout(12000) });
   if (!res.ok) throw new Error(`Remotive HTTP ${res.status}`);
   return res.json();
@@ -60,8 +69,10 @@ async function fetchRemotive(query) {
 
 function normaliseRemotive(raw) {
   return (raw["jobs"] || []).map(item => {
-    const url  = item.url || "";
-    const desc = (item.description || "").replace(/<[^>]+>/g, " ").slice(0, 1000);
+    const url        = item.url || "";
+    const desc       = (item.description || "").replace(/<[^>]+>/g, " ").slice(0, 1000);
+    const datePosted = (item.publication_date || "").slice(0, 10);
+    if (!isRecent(datePosted)) return null;
     return {
       id:          makeId(url),
       title:       item.title || "",
@@ -70,20 +81,20 @@ function normaliseRemotive(raw) {
       is_remote:   true,
       job_type:    item.job_type || "Full-time",
       salary:      item.salary || "",
-      date_posted: (item.publication_date || "").slice(0, 10),
+      date_posted: datePosted,
       site:        "remotive",
       url,
       description: desc,
     };
-  });
+  }).filter(Boolean);
 }
 
 // ── Arbeitnow (free, no auth) ─────────────────────────────────────────────────
-// https://arbeitnow.com/api/job-board-api?search=nodejs
 const ARBEITNOW_QUERIES = [
-  "nodejs",
-  "nestjs",
-  "node typescript backend",
+  "nodejs nestjs",
+  "nestjs typescript",
+  "senior backend node angular",
+  "node.js aws backend",
 ];
 
 async function fetchArbeitnow(query) {
@@ -95,8 +106,10 @@ async function fetchArbeitnow(query) {
 
 function normaliseArbeitnow(raw) {
   return (raw["data"] || []).map(item => {
-    const url  = item.url || "";
-    const desc = (item.description || "").replace(/<[^>]+>/g, " ").slice(0, 1000);
+    const url        = item.url || "";
+    const desc       = (item.description || "").replace(/<[^>]+>/g, " ").slice(0, 1000);
+    const datePosted = item.created_at ? new Date(item.created_at * 1000).toISOString().slice(0, 10) : "";
+    if (!isRecent(datePosted)) return null;
     const loc  = item.location || (item.remote ? "Remote" : "");
     return {
       id:          makeId(url),
@@ -106,12 +119,12 @@ function normaliseArbeitnow(raw) {
       is_remote:   !!item.remote,
       job_type:    (item.job_types || [])[0] || "Full-time",
       salary:      "",
-      date_posted: item.created_at ? new Date(item.created_at * 1000).toISOString().slice(0, 10) : "",
+      date_posted: datePosted,
       site:        "arbeitnow",
       url,
       description: desc,
     };
-  });
+  }).filter(Boolean);
 }
 
 // ── Handler ───────────────────────────────────────────────────────────────────

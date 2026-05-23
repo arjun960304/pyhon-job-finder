@@ -25,14 +25,13 @@ const BASE_RESUME = {
     email: "kumar.arjun000511@gmail.com",
     linkedin: "linkedin.com/in/arjun-kumar-b4150b10b"
   },
-  summary: "Senior Software Engineer with 7+ years of experience designing, developing, and deploying scalable enterprise and SaaS applications using Node.js, NestJS, Angular, and AWS. Strong expertise in backend architecture, REST API development, authentication systems (JWT/RBAC), CI/CD automation, and cloud deployments.",
+  summary: "Senior Full Stack Developer with 7+ years of experience building scalable web applications using Angular, Node.js, and NestJS. Strong expertise in REST API development, authentication systems (JWT/RBAC), and AWS cloud deployments with CI/CD pipelines. Experienced in delivering SaaS and enterprise platforms across EdTech, SportsTech, and B2B domains.",
   skills: {
-    Backend: "Node.js, NestJS, Express.js, REST APIs, JWT, RBAC",
-    Frontend: "Angular, TypeScript, HTML, CSS",
-    Database: "MySQL, Redis, MongoDB",
-    "Cloud & DevOps": "AWS, CI/CD Pipelines, Git, Deployment Automation",
-    Architecture: "System Design, Microservices, Scalable Systems",
-    Integrations: "Stripe, Google Maps SDK, Third-party APIs"
+    "Technical":           "Angular, Node.js, NestJS, Express.js, REST APIs, TypeScript, JWT, RBAC, AWS, CI/CD, MySQL",
+    "Core Competencies":   "Full Stack Development, API Design & Development, Cloud Infrastructure, Authentication & Authorisation, System Design, Microservices",
+    "Databases":           "MySQL, Redis, MongoDB",
+    "Integrations":        "Stripe, Google Maps SDK, Moodle Web Services, Third-party APIs",
+    "Soft Skills":         "Team Lead, Team Management, Problem-solving, Communication, Adaptability"
   },
   experience: [
     {
@@ -40,11 +39,14 @@ const BASE_RESUME = {
       company: "Quokkalabs LLP",
       period: "Feb 2022 – Present",
       bullets: [
-        "Engineered scalable full-stack applications using Angular, Node.js, and NestJS for enterprise-grade SaaS platforms.",
-        "Designed and developed secure REST APIs with JWT authentication and RBAC authorization mechanisms.",
-        "Integrated Stripe payment gateway, Google Maps SDK, and multiple third-party APIs.",
-        "Managed AWS-based production deployments and CI/CD pipelines.",
-        "Reduced deployment time by approximately 20% through automation and CI/CD improvements."
+        "Engineered scalable full-stack applications leveraging Angular and Node.js, enhancing application performance and user experience.",
+        "Architected REST APIs using NestJS and Express, ensuring seamless data flow and efficient backend operations.",
+        "Implemented robust JWT authentication and RBAC authorisation mechanisms, bolstering application security and data protection.",
+        "Orchestrated the integration of Stripe payments, Google Maps SDK, and various external APIs, expanding application functionality.",
+        "Managed deployment of production systems on AWS with CI/CD pipelines, automating release processes and ensuring high availability.",
+        "Streamlined deployment processes, resulting in a 20% reduction in deployment time.",
+        "Improved application security posture by implementing JWT and RBAC across multiple services.",
+        "Expanded application functionality by integrating Stripe payments and Google Maps SDK."
       ]
     },
     {
@@ -52,9 +54,11 @@ const BASE_RESUME = {
       company: "InsightGeeks Solutions Pvt Ltd",
       period: "Aug 2019 – Nov 2021",
       bullets: [
-        "Developed Angular-based web applications with reusable UI components.",
-        "Integrated frontend systems with backend REST APIs.",
-        "Improved UI/UX and optimized frontend performance."
+        "Developed Angular web applications, delivering user-friendly interfaces and robust functionality.",
+        "Created reusable UI components, enhancing code maintainability and promoting design consistency.",
+        "Integrated front-end applications with back-end REST APIs, facilitating seamless data exchange.",
+        "Optimised front-end performance, resulting in improved application responsiveness and user satisfaction.",
+        "Improved UI/UX, leading to increased user engagement and positive feedback."
       ]
     },
     {
@@ -62,20 +66,45 @@ const BASE_RESUME = {
       company: "Elroute Pvt Ltd",
       period: "Jun 2018 – Jul 2019",
       bullets: [
-        "Developed responsive Angular UI modules for enterprise applications.",
-        "Implemented reusable frontend components to improve maintainability.",
-        "Integrated frontend modules with backend APIs."
+        "Developed Angular UI modules for enterprise applications, enhancing front-end functionality.",
+        "Implemented responsive layouts, ensuring optimal user experience across diverse devices.",
+        "Ensured cross-browser compatibility, enhancing accessibility for a wider user base.",
+        "Integrated front-end modules with back-end APIs, enabling seamless data flow."
       ]
     }
   ],
   projects: [
-    { name: "LevelExam (EdTech)", bullets: ["Node.js + Express REST APIs", "Moodle integration", "JWT/RBAC auth", "AWS + CI/CD"] },
-    { name: "Edique Control Panel", bullets: ["NestJS + SQL backend", "Device monitoring APIs", "AWS infrastructure"] },
-    { name: "ESEO – Sports Booking", bullets: ["Node.js booking APIs", "Stripe payment gateway", "React admin panel support"] }
+    {
+      name: "LevelExam (EdTech Platform)",
+      bullets: [
+        "Engineered scalable REST APIs using Node.js and Express to enhance platform performance.",
+        "Integrated Moodle Web Services for seamless educational content delivery.",
+        "Implemented JWT and RBAC security measures, ensuring secure access to sensitive data.",
+        "Managed deployment of services on AWS with CI/CD pipelines, improving deployment efficiency."
+      ]
+    },
+    {
+      name: "Edique Control Panel",
+      bullets: [
+        "Developed backend APIs using NestJS and SQL, enhancing system efficiency.",
+        "Created device and user management services for improved administrative control.",
+        "Integrated AWS infrastructure to ensure scalable and reliable deployment."
+      ]
+    },
+    {
+      name: "ESEO – Sports Booking Platform",
+      bullets: [
+        "Designed backend booking APIs using Node.js, optimising booking process efficiency.",
+        "Integrated Stripe payment gateway, facilitating secure and seamless transactions.",
+        "Provided support for the React-based admin panel, bolstering platform maintainability."
+      ]
+    }
   ],
   education: [
-    { degree: "B.Tech – Computer Science", school: "Jaipur National University", year: "2014–2018" }
-  ]
+    { degree: "B.Tech – Computer Science", school: "Jaipur National University, Delhi, India", year: "2014–2018" },
+    { degree: "Higher Secondary (Science)", school: "Paramount Academy, Delhi, India", year: "2012–2014" }
+  ],
+  languages: ["English", "Hindi"]
 };
 
 const SYSTEM = `You are an expert resume writer. Given a base resume JSON and a job description,

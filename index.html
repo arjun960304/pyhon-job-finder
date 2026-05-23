@@ -172,6 +172,45 @@
     /* fallback warning */
     .fallback-note { background: #fff7ed; border: 1px solid #fed7aa; color: #92400e; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; }
 
+    /* ── Prep guide ─────────────────────────────────── */
+    .prep-match { background: var(--blue-light); border-left: 4px solid var(--blue); border-radius: 8px; padding: 12px 16px; font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+    .prep-section { margin-bottom: 22px; }
+    .prep-section h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .prep-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .prep-pill { font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 99px; }
+    .pp-green { background: var(--green-bg); color: var(--green-text); }
+    .pp-amber { background: var(--amber-bg); color: var(--amber-text); }
+    .pp-red   { background: var(--red-bg);   color: var(--red-text); }
+    .pp-blue  { background: var(--blue-light); color: var(--blue); }
+    .skill-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; }
+    .skill-card .sc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .skill-card .sc-name   { font-size: 13px; font-weight: 600; }
+    .skill-card .sc-tip    { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .sc-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; text-transform: uppercase; letter-spacing: .04em; }
+    .sc-high   { background: var(--red-bg);   color: var(--red-text); }
+    .sc-medium { background: var(--amber-bg); color: var(--amber-text); }
+    .sc-low    { background: var(--green-bg); color: var(--green-text); }
+    .q-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
+    .q-cat  { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+    .q-cat-technical  { color: var(--blue); }
+    .q-cat-system     { color: var(--green-text); }
+    .q-cat-behavioral { color: var(--amber-text); }
+    .q-text { font-size: 14px; font-weight: 600; margin-bottom: 6px; line-height: 1.4; }
+    .q-tip  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .q-tip::before { content: "💡 "; }
+    .timeline-row { display: flex; gap: 12px; margin-bottom: 12px; }
+    .tl-badge { min-width: 76px; background: var(--blue); color: #fff; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; text-align: center; align-self: flex-start; flex-shrink: 0; }
+    .tl-body  { flex: 1; }
+    .tl-focus { font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+    .tl-tasks { list-style: disc; padding-left: 16px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .resume-tip { background: var(--blue-light); border-radius: 6px; padding: 8px 12px; font-size: 13px; margin-bottom: 6px; }
+    .resume-tip::before { content: "✏️ "; }
+    .topic-item { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; padding: 5px 0; border-bottom: 1px solid var(--border); line-height: 1.5; }
+    .topic-item:last-child { border-bottom: none; }
+    .topic-item::before { content: "📌"; flex-shrink: 0; }
+    .btn-prep { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+    .btn-prep:hover { opacity: .85; }
+
     /* Scrollbar styling */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -276,6 +315,24 @@
       <button class="btn btn-primary" onclick="copyResume()" aria-label="Copy resume to clipboard">📋 Copy</button>
       <button class="btn btn-outline" onclick="downloadResume()" aria-label="Download resume as text file">⬇ Download .txt</button>
       <button class="btn btn-outline" onclick="closeModal()" style="margin-left:auto">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ PREP MODAL ═ -->
+<div class="modal-overlay" id="prepModal" role="dialog" aria-modal="true" aria-labelledby="prepModalTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="prepModalTitle">🎯 Interview Prep</h2>
+      <button class="modal-close" onclick="closePrepModal()" aria-label="Close prep modal">✕</button>
+    </div>
+    <div class="modal-body" id="prepModalBody">
+      <div class="spinner-wrap"><div class="spinner"></div><p>Building your prep guide…</p></div>
+    </div>
+    <div class="modal-footer" id="prepModalFooter">
+      <button class="btn btn-primary" onclick="copyPrepGuide()" aria-label="Copy prep guide">📋 Copy Guide</button>
+      <button class="btn btn-outline" onclick="downloadPrepGuide()" aria-label="Download prep guide">⬇ Download .txt</button>
+      <button class="btn btn-outline" onclick="closePrepModal()" style="margin-left:auto">Close</button>
     </div>
   </div>
 </div>
@@ -451,11 +508,14 @@ function renderJobs() {
       </div>
       <div class="card-actions">
         <button class="btn-sm btn-gen" onclick="openResumeModal(${JSON.stringify(job.id)}, ${JSON.stringify(job.title)}, ${JSON.stringify(job.company)}, ${JSON.stringify((job.description||'').slice(0,3000))})" aria-label="Generate tailored resume for ${esc(job.title)} at ${esc(job.company)}">
-          ✨ Generate Resume
+          ✨ Resume
+        </button>
+        <button class="btn-sm btn-prep" onclick="openPrepModal(${JSON.stringify(job.title)}, ${JSON.stringify(job.company)}, ${JSON.stringify((job.description||'').slice(0,3000))})" aria-label="Get interview prep guide for ${esc(job.title)} at ${esc(job.company)}">
+          🎯 Prep
         </button>
         <a class="btn-sm btn-apply" href="${esc(job.url)}" target="_blank" rel="noopener noreferrer" aria-label="Apply to ${esc(job.title)} at ${esc(job.company)}">Apply →</a>
         <button class="btn-sm btn-save${isApplied(job.url) ? " saved" : ""}" onclick="toggleApplied(${JSON.stringify(job.url)})" aria-label="Toggle applied status for ${esc(job.title)}">
-          ${applied ? "Applied ✓" : "♡ Save"}
+          ${applied ? "✓ Applied" : "♡"}
         </button>
       </div>
     </div>`;
@@ -544,7 +604,6 @@ function closeModal() {
 document.getElementById("resumeModal").addEventListener("click", e => {
   if (e.target === e.currentTarget) closeModal();
 });
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 
 function copyResume() {
   const text = document.getElementById("rawText")?.value || ACTIVE_RESUME_TEXT;
@@ -589,6 +648,167 @@ function showToast(msg) {
 function esc(s) {
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
+
+// ─── Prep modal ──────────────────────────────────────────────────────────────
+let ACTIVE_PREP_TEXT = "";
+
+function openPrepModal(title, company, description) {
+  document.getElementById("prepModalTitle").textContent = `🎯 Prep — ${company}`;
+  document.getElementById("prepModal").classList.add("open");
+  document.getElementById("prepModalBody").innerHTML =
+    `<div class="spinner-wrap"><div class="spinner"></div><p>Building your prep guide for <strong>${esc(company)}</strong>…</p></div>`;
+  document.getElementById("prepModalFooter").style.visibility = "hidden";
+  ACTIVE_PREP_TEXT = "";
+  generatePrep(title, company, description);
+}
+
+async function generatePrep(title, company, description) {
+  try {
+    const res  = await fetch("/api/prep", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ title, company, description })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    const html = buildPrepHTML(data.prep);
+    ACTIVE_PREP_TEXT = buildPrepText(data.prep, title, company);
+    document.getElementById("prepModalTitle").textContent = `🎯 Prep Guide — ${company}`;
+    document.getElementById("prepModalFooter").style.visibility = "visible";
+    document.getElementById("prepModalBody").innerHTML =
+      (data.fallback ? `<div class="fallback-note">⚠ Claude unavailable — showing generic prep guide.</div>` : "") + html;
+  } catch (err) {
+    document.getElementById("prepModalBody").innerHTML =
+      `<div class="error-banner">Could not generate prep guide — ${esc(err.message)}</div>`;
+  }
+}
+
+function buildPrepHTML(p) {
+  if (!p) return "<p>No data.</p>";
+
+  const strengthsHTML = (p.strengths || []).map(s =>
+    `<span class="prep-pill pp-green">✓ ${esc(s)}</span>`).join("");
+
+  const brushHTML = (p.skills_to_brush || []).map(s =>
+    `<div class="skill-card">
+       <div class="sc-header">
+         <span class="sc-name">${esc(s.skill)}</span>
+         <span class="sc-badge sc-${(s.priority||"medium").toLowerCase()}">${esc(s.priority||"medium")}</span>
+       </div>
+       <div class="sc-tip">${esc(s.tip||"")}</div>
+     </div>`).join("");
+
+  const gapHTML = (p.skills_gap || []).length
+    ? (p.skills_gap || []).map(s =>
+        `<div class="skill-card">
+           <div class="sc-header">
+             <span class="sc-name">${esc(s.skill)}</span>
+             <span class="sc-badge sc-${(s.priority||"medium").toLowerCase()}">${esc(s.priority||"medium")}</span>
+           </div>
+           <div class="sc-tip">${esc(s.tip||"")}</div>
+         </div>`).join("")
+    : `<p style="color:var(--muted);font-size:13px">No significant gaps — great fit! ✅</p>`;
+
+  const qHTML = (p.likely_questions || []).map(q => {
+    const catClass = (q.category||"").toLowerCase().includes("system") ? "q-cat-system"
+                   : (q.category||"").toLowerCase().includes("behav")  ? "q-cat-behavioral"
+                   : "q-cat-technical";
+    return `<div class="q-card">
+      <div class="q-cat ${catClass}">${esc(q.category||"Technical")}</div>
+      <div class="q-text">${esc(q.question||"")}</div>
+      <div class="q-tip">${esc(q.answer_tip||"")}</div>
+    </div>`;
+  }).join("");
+
+  const topicsHTML = (p.topics_to_study || []).map(t =>
+    `<div class="topic-item">${esc(t)}</div>`).join("");
+
+  const timelineHTML = (p.prep_plan || []).map(ph =>
+    `<div class="timeline-row">
+       <div class="tl-badge">${esc(ph.phase||"")}</div>
+       <div class="tl-body">
+         <div class="tl-focus">${esc(ph.focus||"")}</div>
+         <ul class="tl-tasks">${(ph.tasks||[]).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>
+       </div>
+     </div>`).join("");
+
+  const resumeTipsHTML = (p.resume_tips || []).map(t =>
+    `<div class="resume-tip">${esc(t)}</div>`).join("");
+
+  return `
+    <div class="prep-match">${esc(p.match_summary||"")}</div>
+    ${strengthsHTML ? `<div class="prep-section"><h3>💪 Your Strengths</h3><div class="prep-pills">${strengthsHTML}</div></div>` : ""}
+    ${brushHTML     ? `<div class="prep-section"><h3>⚡ Skills to Brush Up</h3>${brushHTML}</div>` : ""}
+    ${gapHTML       ? `<div class="prep-section"><h3>📚 Skills to Learn</h3>${gapHTML}</div>` : ""}
+    ${topicsHTML    ? `<div class="prep-section"><h3>📌 Topics to Study</h3>${topicsHTML}</div>` : ""}
+    ${qHTML         ? `<div class="prep-section"><h3>🎤 Likely Interview Questions</h3>${qHTML}</div>` : ""}
+    ${timelineHTML  ? `<div class="prep-section"><h3>📅 Prep Timeline</h3>${timelineHTML}</div>` : ""}
+    ${resumeTipsHTML? `<div class="prep-section"><h3>✏️ Resume Tips for This Role</h3>${resumeTipsHTML}</div>` : ""}
+  `;
+}
+
+function buildPrepText(p, title, company) {
+  if (!p) return "";
+  const lines = [`INTERVIEW PREP GUIDE — ${title} @ ${company}`, "=".repeat(50), ""];
+  lines.push("MATCH SUMMARY", p.match_summary||"", "");
+  lines.push("YOUR STRENGTHS", ...(p.strengths||[]).map(s=>`  ✓ ${s}`), "");
+  if ((p.skills_to_brush||[]).length) {
+    lines.push("SKILLS TO BRUSH UP");
+    (p.skills_to_brush||[]).forEach(s => lines.push(`  [${(s.priority||"").toUpperCase()}] ${s.skill}: ${s.tip}`));
+    lines.push("");
+  }
+  if ((p.skills_gap||[]).length) {
+    lines.push("SKILLS TO LEARN");
+    (p.skills_gap||[]).forEach(s => lines.push(`  [${(s.priority||"").toUpperCase()}] ${s.skill}: ${s.tip}`));
+    lines.push("");
+  }
+  if ((p.topics_to_study||[]).length) {
+    lines.push("TOPICS TO STUDY", ...(p.topics_to_study||[]).map(t=>`  • ${t}`), "");
+  }
+  if ((p.likely_questions||[]).length) {
+    lines.push("LIKELY INTERVIEW QUESTIONS");
+    (p.likely_questions||[]).forEach((q,i) => {
+      lines.push(`  Q${i+1} [${q.category}]: ${q.question}`);
+      lines.push(`      Tip: ${q.answer_tip}`);
+    });
+    lines.push("");
+  }
+  if ((p.prep_plan||[]).length) {
+    lines.push("PREP PLAN");
+    (p.prep_plan||[]).forEach(ph => {
+      lines.push(`  ${ph.phase} — ${ph.focus}`);
+      (ph.tasks||[]).forEach(t => lines.push(`    - ${t}`));
+    });
+    lines.push("");
+  }
+  if ((p.resume_tips||[]).length) {
+    lines.push("RESUME TIPS", ...(p.resume_tips||[]).map(t=>`  • ${t}`), "");
+  }
+  return lines.join("\n");
+}
+
+function closePrepModal() {
+  document.getElementById("prepModal").classList.remove("open");
+}
+document.getElementById("prepModal").addEventListener("click", e => {
+  if (e.target === e.currentTarget) closePrepModal();
+});
+
+function copyPrepGuide() {
+  navigator.clipboard.writeText(ACTIVE_PREP_TEXT || "No prep guide loaded.").then(() => showToast("Prep guide copied!"));
+}
+function downloadPrepGuide() {
+  const blob = new Blob([ACTIVE_PREP_TEXT], { type: "text/plain" });
+  const a    = document.createElement("a");
+  a.href     = URL.createObjectURL(blob);
+  a.download = "Arjun_Kumar_Prep_Guide.txt";
+  a.click();
+}
+
+// ─── Escape handler covers both modals ───────────────────────────────────────
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { closeModal(); closePrepModal(); }
+});
 
 // ─── Service Worker ──────────────────────────────────────────────────────────
 function registerSW() {
