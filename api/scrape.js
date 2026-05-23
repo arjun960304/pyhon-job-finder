@@ -44,7 +44,7 @@ const MUST_HAVE = [
   "typescript",
   "react", "angular",          // React.js now primary in resume
   "aws",
-  "rest api", "rest apis",
+  "rest api", "rest apis", "restful",  // "RESTful API" won't match "rest api" — need "restful"
   "jwt", "rbac",
   "mysql", "redis", "mongodb",
   "microservices",
@@ -70,7 +70,8 @@ const TARGET_TITLES = [
   "tech lead", "software engineer", "senior engineer",
   "senior developer", "lead developer",
   "engineering lead", "principal engineer", "staff engineer",
-  "backend developer", "senior full stack", "senior full-stack"
+  "backend developer", "senior full stack", "senior full-stack",
+  "software developer", "senior software developer"
 ];
 
 // Job title MUST contain one of these — hard-drops all non-engineering roles
@@ -159,7 +160,7 @@ async function fetchRemotive(query) {
 function normaliseRemotive(raw) {
   return (raw["jobs"] || []).map(item => {
     const url        = item.url || "";
-    const desc       = (item.description || "").replace(/<[^>]+>/g, " ").slice(0, 1000);
+    const desc       = (item.description || "").replace(/<[^>]+>/g, " ").slice(0, 3000);
     const datePosted = (item.publication_date || "").slice(0, 10);
     if (!isRecent(datePosted)) return null;
     return {
@@ -203,7 +204,7 @@ function normaliseJobicy(raw) {
   return (raw["jobs"] || []).map(item => {
     const url        = item.url || item.jobUrl || "";
     const desc       = (item.jobDescription || item.jobExcerpt || "")
-                        .replace(/<[^>]+>/g, " ").slice(0, 1000);
+                        .replace(/<[^>]+>/g, " ").slice(0, 3000);
     const datePosted = (item.pubDate || "").slice(0, 10);
     if (!isRecent(datePosted)) return null;
 
@@ -255,7 +256,7 @@ async function fetchArbeitnow(query) {
 function normaliseArbeitnow(raw) {
   return (raw["data"] || []).map(item => {
     const url        = item.url || "";
-    const desc       = (item.description || "").replace(/<[^>]+>/g, " ").slice(0, 1000);
+    const desc       = (item.description || "").replace(/<[^>]+>/g, " ").slice(0, 3000);
     const datePosted = item.created_at
       ? new Date(item.created_at * 1000).toISOString().slice(0, 10)
       : "";
@@ -316,7 +317,7 @@ module.exports = async function handler(req, res) {
       const { score, matched, missing } = scoreJob(job);
       return { ...job, match_score: score, matched_skills: matched, missing_skills: missing };
     })
-    .filter(j => j.match_score >= 30)   // min 30 — must have meaningful skill overlap
+    .filter(j => j.match_score >= 20)   // min 20 — REQUIRED_IN_TITLE guards quality; 20 ensures basic skill overlap
     .sort((a, b) => b.match_score - a.match_score);
 
   return res.status(200).json({
