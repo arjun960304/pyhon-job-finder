@@ -1,0 +1,7 @@
+﻿node_modules/
+.env
+.env.local
+*.csv
+__pycache__/
+*.pyc
+.vercel/

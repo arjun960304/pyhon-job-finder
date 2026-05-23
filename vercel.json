@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/scrape.js": {
+      "maxDuration": 30
+    },
+    "api/generate-resume.js": {
+      "maxDuration": 30
+    },
+    "api/score.js": {
+      "maxDuration": 10
+    }
+  }
+}

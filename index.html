@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#185FA5" />
+  <meta name="description" content="Arjun Kumar — Senior Software Engineer Job Dashboard" />
+  <title>Arjun Kumar · Job Dashboard</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #185FA5;
+      --blue-light: #EBF3FB;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --bg: #f9fafb;
+      --white: #ffffff;
+      --green-bg: #EAF3DE; --green-text: #27500A;
+      --amber-bg: #FAEEDA; --amber-text: #633806;
+      --red-bg:   #FCEBEB; --red-text:   #791F1F;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 8px rgba(0,0,0,.06);
+    }
+    html { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    body { min-height: 100vh; }
+
+    /* ── Layout ─────────────────────────────────────── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+
+    /* ── Header ─────────────────────────────────────── */
+    header { background: var(--white); border-bottom: 1px solid var(--border); padding: 20px 0 12px; }
+    .header-inner { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; justify-content: space-between; }
+    .header-info h1 { font-size: clamp(22px, 4vw, 30px); color: var(--blue); font-weight: 700; line-height: 1.1; }
+    .header-info p  { color: var(--muted); font-size: 14px; margin-top: 4px; }
+    .header-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .btn { min-height: 44px; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: opacity .15s; }
+    .btn:disabled { opacity: .55; cursor: not-allowed; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover:not(:disabled) { opacity: .88; }
+    .btn-outline { background: var(--white); color: var(--blue); border: 1.5px solid var(--blue); }
+    .btn-outline:hover:not(:disabled) { background: var(--blue-light); }
+    .last-updated { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Stats row ──────────────────────────────────── */
+    .stats-row { display: flex; gap: 16px; flex-wrap: wrap; padding: 14px 0 8px; }
+    .stat-chip { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; font-size: 13px; }
+    .stat-chip span { font-weight: 700; color: var(--blue); font-size: 18px; display: block; }
+
+    /* ── Filter bar ─────────────────────────────────── */
+    .filter-bar { background: var(--white); border-bottom: 1px solid var(--border); padding: 10px 0; position: sticky; top: 0; z-index: 10; }
+    .filter-inner { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .filter-group { display: flex; gap: 4px; background: var(--bg); border-radius: 8px; padding: 3px; }
+    .filter-btn { min-height: 36px; padding: 4px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 500; background: transparent; color: var(--muted); transition: all .15s; }
+    .filter-btn.active { background: var(--white); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.12); font-weight: 600; }
+    .search-box { flex: 1; min-width: 160px; max-width: 280px; }
+    .search-box input { width: 100%; min-height: 44px; border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 14px; outline: none; }
+    .search-box input:focus { border-color: var(--blue); }
+    select.filter-select { min-height: 44px; border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 13px; background: var(--white); cursor: pointer; outline: none; }
+
+    /* ── Toast ──────────────────────────────────────── */
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 14px; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity .3s; }
+    #toast.show { opacity: 1; }
+
+    /* ── Job grid ───────────────────────────────────── */
+    .jobs-section { padding: 20px 0 40px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 640px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+
+    /* ── Job card ───────────────────────────────────── */
+    .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; transition: box-shadow .2s; }
+    .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+    .card.applied { border-top: 3px solid #27a06a; }
+    .applied-banner { background: #d1fae5; color: #065f46; font-size: 12px; font-weight: 600; padding: 4px 12px; display: none; }
+    .card.applied .applied-banner { display: block; }
+
+    .card-body { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+    /* score bar */
+    .score-row { display: flex; align-items: center; gap: 10px; }
+    .score-badge { min-width: 46px; text-align: center; padding: 3px 8px; border-radius: 6px; font-size: 13px; font-weight: 700; }
+    .score-bar-wrap { flex: 1; height: 8px; border-radius: 4px; overflow: hidden; }
+    .score-bar-track { height: 100%; border-radius: 4px; transition: width .4s; }
+    .score-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+
+    .score-green  .score-badge { background: var(--green-bg); color: var(--green-text); }
+    .score-green  .score-bar-wrap { background: #d4edba; }
+    .score-green  .score-bar-track { background: #27a06a; }
+    .score-green  .score-label { color: var(--green-text); }
+
+    .score-amber  .score-badge { background: var(--amber-bg); color: var(--amber-text); }
+    .score-amber  .score-bar-wrap { background: #f5ddb0; }
+    .score-amber  .score-bar-track { background: #e09820; }
+    .score-amber  .score-label { color: var(--amber-text); }
+
+    .score-red    .score-badge { background: var(--red-bg); color: var(--red-text); }
+    .score-red    .score-bar-wrap { background: #f5c6c6; }
+    .score-red    .score-bar-track { background: #d64444; }
+    .score-red    .score-label { color: var(--red-text); }
+
+    /* card meta */
+    .card-title { font-size: 16px; font-weight: 700; line-height: 1.2; }
+    .card-meta   { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px; }
+    .card-meta span + span::before { content: "·"; margin-right: 4px; }
+
+    /* pills */
+    .pills { display: flex; flex-wrap: wrap; gap: 4px; }
+    .pill { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 99px; }
+    .pill-green { background: var(--green-bg); color: var(--green-text); }
+    .pill-red   { background: var(--red-bg);   color: var(--red-text); }
+
+    /* description */
+    .card-desc { font-size: 13px; color: var(--muted); line-height: 1.5; font-style: italic; }
+
+    /* card actions */
+    .card-actions { padding: 12px 14px; border-top: 1px solid var(--border); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .btn-sm { min-height: 36px; padding: 6px 12px; border-radius: 7px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; transition: opacity .15s; }
+    .btn-gen   { background: var(--blue); color: #fff; }
+    .btn-gen:hover { opacity: .85; }
+    .btn-apply { background: var(--blue-light); color: var(--blue); }
+    .btn-apply:hover { opacity: .85; }
+    .btn-save  { background: var(--bg); color: var(--muted); margin-left: auto; border: 1px solid var(--border); }
+    .btn-save.saved { color: #e05252; border-color: #e05252; background: #fff1f1; }
+    .btn-applied-toggle { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+
+    /* ── Skeleton ───────────────────────────────────── */
+    .skeleton-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); padding: 14px; }
+    .skel { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; }
+    .skel-h { height: 16px; margin-bottom: 8px; }
+    .skel-sm { height: 12px; width: 70%; margin-bottom: 6px; }
+    @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+    /* ── Empty / error ──────────────────────────────── */
+    .empty-state { text-align: center; padding: 60px 16px; }
+    .empty-state svg { opacity: .4; margin-bottom: 16px; }
+    .empty-state p { color: var(--muted); font-size: 15px; }
+    .error-banner { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 8px; padding: 12px 16px; display: flex; gap: 10px; align-items: center; justify-content: space-between; }
+
+    /* ── Modal ──────────────────────────────────────── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; display: none; justify-content: center; align-items: center; padding: 16px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: var(--radius); width: 100%; max-width: 760px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,.25); overflow: hidden; }
+    .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .modal-header h2 { font-size: 18px; font-weight: 700; }
+    .modal-close { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); background: var(--white); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+    .modal-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+    .modal-tab { flex: 1; min-height: 44px; border: none; background: transparent; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; transition: all .15s; }
+    .modal-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 700; }
+    .modal-body { flex: 1; overflow-y: auto; padding: 20px; }
+    .modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .spinner-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px; }
+    .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Resume preview */
+    .resume-preview { font-size: 14px; line-height: 1.7; }
+    .resume-preview h1 { font-size: 22px; color: var(--blue); margin-bottom: 2px; }
+    .resume-preview h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); border-bottom: 1px solid var(--border); padding-bottom: 4px; margin: 14px 0 6px; }
+    .resume-preview p  { margin-bottom: 6px; }
+    .resume-preview ul { list-style: disc; padding-left: 18px; margin-bottom: 8px; }
+    .resume-preview li { margin-bottom: 3px; }
+    .resume-preview .skill-tag { display: inline-block; background: var(--blue-light); color: var(--blue); border-radius: 4px; padding: 1px 8px; font-size: 12px; margin: 2px; }
+
+    /* raw text */
+    #rawText { width: 100%; height: 400px; font-family: monospace; font-size: 13px; border: 1px solid var(--border); border-radius: 8px; padding: 12px; resize: vertical; }
+
+    /* fallback warning */
+    .fallback-note { background: #fff7ed; border: 1px solid #fed7aa; color: #92400e; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════ HEADER ═ -->
+<header>
+  <div class="container">
+    <div class="header-inner">
+      <div class="header-info">
+        <h1>Arjun Kumar</h1>
+        <p>Senior Software Engineer &nbsp;|&nbsp; Node.js · NestJS · Angular · AWS</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" id="btnRefresh" onclick="refreshJobs()" aria-label="Refresh job listings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 019-9 9 9 0 016.36 2.64L21 9"/><path d="M21 3v6h-6"/><path d="M21 12a9 9 0 01-9 9 9 9 0 01-6.36-2.64L3 15"/><path d="M3 21v-6h6"/></svg>
+          Refresh Jobs
+        </button>
+        <button class="btn btn-outline" onclick="copyAll()" aria-label="Copy all job summary to clipboard">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy All
+        </button>
+      </div>
+    </div>
+    <div class="last-updated" id="lastUpdated">Last updated: —</div>
+    <div class="stats-row">
+      <div class="stat-chip"><span id="statTotal">—</span>Total Jobs</div>
+      <div class="stat-chip"><span id="statAvg">—</span>Avg Score</div>
+      <div class="stat-chip"><span id="statRemote">—</span>Remote</div>
+      <div class="stat-chip"><span id="statApplied">—</span>Applied</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════ FILTER BAR ═ -->
+<div class="filter-bar">
+  <div class="container">
+    <div class="filter-inner">
+      <!-- Score -->
+      <div class="filter-group" role="group" aria-label="Filter by score">
+        <button class="filter-btn active" data-filter="score" data-value="all" onclick="setFilter('score','all',this)">All</button>
+        <button class="filter-btn" data-filter="score" data-value="75"  onclick="setFilter('score','75',this)">75%+</button>
+        <button class="filter-btn" data-filter="score" data-value="60"  onclick="setFilter('score','60',this)">60%+</button>
+        <button class="filter-btn" data-filter="score" data-value="50"  onclick="setFilter('score','50',this)">50%+</button>
+      </div>
+      <!-- Mode -->
+      <div class="filter-group" role="group" aria-label="Filter by work mode">
+        <button class="filter-btn active" data-filter="mode" data-value="all"    onclick="setFilter('mode','all',this)">All</button>
+        <button class="filter-btn" data-filter="mode" data-value="remote"  onclick="setFilter('mode','remote',this)">Remote</button>
+        <button class="filter-btn" data-filter="mode" data-value="hybrid"  onclick="setFilter('mode','hybrid',this)">Hybrid</button>
+      </div>
+      <!-- Site -->
+      <div class="filter-group" role="group" aria-label="Filter by site">
+        <button class="filter-btn active" data-filter="site" data-value="all"      onclick="setFilter('site','all',this)">All</button>
+        <button class="filter-btn" data-filter="site" data-value="linkedin" onclick="setFilter('site','linkedin',this)">LinkedIn</button>
+        <button class="filter-btn" data-filter="site" data-value="indeed"   onclick="setFilter('site','indeed',this)">Indeed</button>
+      </div>
+      <!-- Sort -->
+      <select class="filter-select" onchange="setSort(this.value)" aria-label="Sort jobs">
+        <option value="score">Score ↓</option>
+        <option value="date">Date ↓</option>
+        <option value="company">Company A–Z</option>
+      </select>
+      <!-- Search -->
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search company or title…" oninput="applyFilters()" aria-label="Search jobs by company or title" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ MAIN ═ -->
+<main class="jobs-section">
+  <div class="container">
+    <div id="errorBanner" style="display:none; margin-bottom:16px;"></div>
+    <div class="grid" id="jobGrid"></div>
+    <div id="emptyState" style="display:none;" class="empty-state">
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#9ca3af" stroke-width="2"><rect x="8" y="16" width="48" height="36" rx="4"/><path d="M24 28h16M24 36h10"/></svg>
+      <p>No jobs match your filters.<br>Try refreshing or adjusting filters.</p>
+    </div>
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════ RESUME MODAL ═ -->
+<div class="modal-overlay" id="resumeModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Generate Resume</h2>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close modal">✕</button>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tabPreview" onclick="switchTab('preview')">Preview</button>
+      <button class="modal-tab" id="tabRaw" onclick="switchTab('raw')">Raw Text</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <div class="spinner-wrap"><div class="spinner"></div><p>Loading…</p></div>
+    </div>
+    <div class="modal-footer" id="modalFooter">
+      <button class="btn btn-primary" onclick="copyResume()" aria-label="Copy resume to clipboard">📋 Copy</button>
+      <button class="btn btn-outline" onclick="downloadResume()" aria-label="Download resume as text file">⬇ Download .txt</button>
+      <button class="btn btn-outline" onclick="closeModal()" style="margin-left:auto">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ TOAST ═ -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// ─── State ──────────────────────────────────────────────────────────────────
+let ALL_JOBS = [];
+let FILTERED_JOBS = [];
+let ACTIVE_RESUME_TEXT = "";
+let ACTIVE_RESUME_HTML = "";
+let filters = { score: "all", mode: "all", site: "all" };
+let sortBy = "score";
+
+// ─── Applied tracker ────────────────────────────────────────────────────────
+function isApplied(url) { return !!localStorage.getItem("applied:" + url); }
+function toggleApplied(url) {
+  const key = "applied:" + url;
+  if (localStorage.getItem(key)) localStorage.removeItem(key);
+  else localStorage.setItem(key, "1");
+  renderJobs();
+  updateStats();
+}
+
+// ─── On load ─────────────────────────────────────────────────────────────────
+window.addEventListener("load", () => {
+  showSkeletons();
+  fetchLive();
+  registerSW();
+});
+
+async function refreshJobs() {
+  const btn = document.getElementById("btnRefresh");
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px"></div> Fetching…';
+  showSkeletons();
+  await fetchLive();
+  btn.disabled = false;
+  btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 019-9 9 9 0 016.36 2.64L21 9"/><path d="M21 3v6h-6"/><path d="M21 12a9 9 0 01-9 9 9 9 0 01-6.36-2.64L3 15"/><path d="M3 21v-6h6"/></svg> Refresh Jobs`;
+}
+
+async function fetchLive() {
+  try {
+    const res = await fetch("/api/scrape");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    const prevCount = ALL_JOBS.length;
+    setJobs(data.jobs || [], data.fetched_at);
+    const newCount = (data.jobs || []).length;
+    const diff = newCount - prevCount;
+    showToast(`${newCount} jobs found${diff > 0 ? " · " + diff + " new" : ""}`);
+    hideError();
+  } catch (err) {
+    showError("Could not fetch jobs: " + err.message);
+    if (ALL_JOBS.length === 0) renderEmpty();
+  }
+}
+
+function setJobs(jobs, fetchedAt) {
+  ALL_JOBS = jobs;
+  if (fetchedAt) {
+    const d = new Date(fetchedAt);
+    document.getElementById("lastUpdated").textContent =
+      "Last updated: " + (isNaN(d) ? fetchedAt : d.toLocaleString("en-IN", { day:"numeric", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" }));
+  }
+  applyFilters();
+  updateStats();
+}
+
+// ─── Filters & sort ─────────────────────────────────────────────────────────
+function setFilter(type, value, el) {
+  filters[type] = value;
+  document.querySelectorAll(`[data-filter="${type}"]`).forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+  applyFilters();
+}
+
+function setSort(value) {
+  sortBy = value;
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  let jobs = ALL_JOBS.filter(j => {
+    if (filters.score !== "all" && j.match_score < parseInt(filters.score)) return false;
+    if (filters.mode === "remote" && !j.is_remote) return false;
+    if (filters.mode === "hybrid" && j.is_remote) return false;
+    if (filters.site !== "all" && j.site !== filters.site) return false;
+    if (q && !j.title.toLowerCase().includes(q) && !j.company.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  if (sortBy === "score")   jobs.sort((a,b) => b.match_score - a.match_score);
+  if (sortBy === "date")    jobs.sort((a,b) => new Date(b.date_posted) - new Date(a.date_posted));
+  if (sortBy === "company") jobs.sort((a,b) => a.company.localeCompare(b.company));
+  FILTERED_JOBS = jobs;
+  renderJobs();
+}
+
+// ─── Stats ───────────────────────────────────────────────────────────────────
+function updateStats() {
+  const total   = ALL_JOBS.length;
+  const avg     = total ? Math.round(ALL_JOBS.reduce((s,j) => s + j.match_score, 0) / total) : 0;
+  const remote  = ALL_JOBS.filter(j => j.is_remote).length;
+  const applied = ALL_JOBS.filter(j => isApplied(j.url)).length;
+  document.getElementById("statTotal").textContent   = total;
+  document.getElementById("statAvg").textContent     = avg ? avg + "%" : "—";
+  document.getElementById("statRemote").textContent  = remote;
+  document.getElementById("statApplied").textContent = applied;
+}
+
+// ─── Render ──────────────────────────────────────────────────────────────────
+function showSkeletons() {
+  const grid = document.getElementById("jobGrid");
+  grid.innerHTML = [1,2,3].map(() => `
+    <div class="skeleton-card">
+      <div class="skel skel-h" style="width:40%"></div>
+      <div class="skel skel-h" style="width:90%"></div>
+      <div class="skel skel-sm"></div>
+      <div class="skel skel-sm" style="width:50%"></div>
+    </div>`).join("");
+  document.getElementById("emptyState").style.display = "none";
+}
+
+function renderEmpty() {
+  document.getElementById("jobGrid").innerHTML = "";
+  document.getElementById("emptyState").style.display = "block";
+}
+
+function renderJobs() {
+  const grid = document.getElementById("jobGrid");
+  const empty = document.getElementById("emptyState");
+  if (!FILTERED_JOBS.length) { grid.innerHTML = ""; empty.style.display = "block"; return; }
+  empty.style.display = "none";
+
+  grid.innerHTML = FILTERED_JOBS.map(job => {
+    const sc = job.match_score || 0;
+    const cls = sc >= 75 ? "score-green" : sc >= 50 ? "score-amber" : "score-red";
+    const lbl = sc >= 75 ? "STRONG MATCH" : sc >= 50 ? "GOOD MATCH" : "WEAK MATCH";
+    const applied = isApplied(job.url);
+    const matched = (job.matched_skills || []).slice(0, 5);
+    const missing = (job.missing_skills || []).slice(0, 3);
+    const extraMatched = (job.matched_skills || []).length - matched.length;
+    const desc = (job.description || "").slice(0, 120) + ((job.description || "").length > 120 ? "…" : "");
+    const dateStr = job.date_posted ? new Date(job.date_posted).toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" }) : "";
+    const salaryStr = job.salary && job.salary !== "–" ? " · " + job.salary : "";
+
+    return `<div class="card${applied ? " applied" : ""}" id="card-${job.id}">
+      <div class="applied-banner">✓ Applied</div>
+      <div class="card-body">
+        <div class="score-row ${cls}">
+          <div class="score-badge">${sc}%</div>
+          <div class="score-bar-wrap"><div class="score-bar-track" style="width:${sc}%"></div></div>
+          <div class="score-label">${lbl}</div>
+        </div>
+        <div class="card-title">${esc(job.title)}</div>
+        <div class="card-meta">
+          <span>${esc(job.company)}</span>
+          <span>${esc(job.location || "")}</span>
+          <span>${esc(job.site || "")}</span>
+        </div>
+        <div class="card-meta">
+          ${job.job_type ? `<span>${esc(job.job_type)}</span>` : ""}
+          ${salaryStr ? `<span>${esc(salaryStr.replace(" · ",""))}</span>` : ""}
+          ${dateStr ? `<span>${esc(dateStr)}</span>` : ""}
+        </div>
+        ${matched.length ? `<div class="pills">${matched.map(s=>`<span class="pill pill-green">${esc(s)}</span>`).join("")}${extraMatched>0?`<span class="pill pill-green">+${extraMatched}</span>`:""}</div>` : ""}
+        ${missing.length ? `<div class="pills">${missing.map(s=>`<span class="pill pill-red">${esc(s)}</span>`).join("")}</div>` : ""}
+        ${desc ? `<div class="card-desc">"${esc(desc)}"</div>` : ""}
+      </div>
+      <div class="card-actions">
+        <button class="btn-sm btn-gen" onclick="openResumeModal(${JSON.stringify(job.id)}, ${JSON.stringify(job.title)}, ${JSON.stringify(job.company)}, ${JSON.stringify((job.description||'').slice(0,3000))})" aria-label="Generate tailored resume for ${esc(job.title)} at ${esc(job.company)}">
+          ✨ Generate Resume
+        </button>
+        <a class="btn-sm btn-apply" href="${esc(job.url)}" target="_blank" rel="noopener noreferrer" aria-label="Apply to ${esc(job.title)} at ${esc(job.company)}">Apply →</a>
+        <button class="btn-sm btn-save${isApplied(job.url) ? " saved" : ""}" onclick="toggleApplied(${JSON.stringify(job.url)})" aria-label="Toggle applied status for ${esc(job.title)}">
+          ${applied ? "Applied ✓" : "♡ Save"}
+        </button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ─── Resume modal ────────────────────────────────────────────────────────────
+let currentJobId = null;
+
+function openResumeModal(jobId, title, company, description) {
+  currentJobId = jobId;
+  document.getElementById("modalTitle").textContent = `Tailoring resume for ${company}…`;
+  document.getElementById("resumeModal").classList.add("open");
+  document.getElementById("tabPreview").classList.add("active");
+  document.getElementById("tabRaw").classList.remove("active");
+  document.getElementById("modalBody").innerHTML =
+    `<div class="spinner-wrap"><div class="spinner"></div><p>Tailoring resume for ${esc(company)}…</p></div>`;
+  document.getElementById("modalFooter").style.visibility = "hidden";
+  ACTIVE_RESUME_TEXT = "";
+  ACTIVE_RESUME_HTML = "";
+  generateResume(jobId, title, company, description);
+}
+
+async function generateResume(jobId, title, company, description) {
+  try {
+    const res = await fetch("/api/generate-resume", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ job_id: jobId, title, company, description })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    ACTIVE_RESUME_TEXT = data.plain_text || "";
+    ACTIVE_RESUME_HTML = buildResumeHTML(data.tailored);
+    document.getElementById("modalTitle").textContent = `Resume — ${company}`;
+    document.getElementById("modalFooter").style.visibility = "visible";
+    const body = document.getElementById("modalBody");
+    body.innerHTML = (data.fallback
+      ? `<div class="fallback-note">⚠ Could not tailor — showing base resume.</div>` : "") +
+      `<div id="previewPane" class="resume-preview">${ACTIVE_RESUME_HTML}</div>
+       <textarea id="rawText" style="display:none">${esc(ACTIVE_RESUME_TEXT)}</textarea>`;
+  } catch (err) {
+    document.getElementById("modalTitle").textContent = "Generate Resume — Error";
+    document.getElementById("modalBody").innerHTML =
+      `<div class="error-banner">Could not generate — ${esc(err.message)}</div>`;
+  }
+}
+
+function buildResumeHTML(r) {
+  if (!r) return "<p>No resume data.</p>";
+  const skillsHTML = Object.entries(r.skills || {}).map(([cat, val]) =>
+    `<p><strong>${esc(cat)}:</strong> ${val.split(",").map(s=>`<span class="skill-tag">${esc(s.trim())}</span>`).join(" ")}</p>`
+  ).join("");
+  const expHTML = (r.experience || []).map(e =>
+    `<p><strong>${esc(e.role)}</strong> — ${esc(e.company)} <em style="color:var(--muted)">(${esc(e.period)})</em></p>
+     <ul>${e.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`
+  ).join("");
+  const projHTML = (r.projects || []).map(p =>
+    `<p><strong>${esc(p.name)}</strong></p><ul>${p.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`
+  ).join("");
+  const c = r.contact || {};
+  return `
+    <h1>${esc(r.name || "")}</h1>
+    <p style="color:var(--muted);margin-bottom:4px">${esc(r.title || "")}</p>
+    <p style="font-size:13px;color:var(--muted)">${esc(c.location||"")} · ${esc(c.phone||"")} · <a href="mailto:${esc(c.email||"")}">${esc(c.email||"")}</a></p>
+    <h2>Summary</h2><p>${esc(r.summary || "")}</p>
+    <h2>Skills</h2>${skillsHTML}
+    <h2>Experience</h2>${expHTML}
+    <h2>Projects</h2>${projHTML}
+    <h2>Education</h2>${(r.education||[]).map(e=>`<p>${esc(e.degree)} — ${esc(e.school)} (${esc(e.year)})</p>`).join("")}
+  `;
+}
+
+function switchTab(tab) {
+  document.getElementById("tabPreview").classList.toggle("active", tab === "preview");
+  document.getElementById("tabRaw").classList.toggle("active", tab === "raw");
+  const preview = document.getElementById("previewPane");
+  const raw = document.getElementById("rawText");
+  if (preview) preview.style.display = tab === "preview" ? "" : "none";
+  if (raw)     raw.style.display     = tab === "raw"     ? "" : "none";
+}
+
+function closeModal() {
+  document.getElementById("resumeModal").classList.remove("open");
+}
+document.getElementById("resumeModal").addEventListener("click", e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+function copyResume() {
+  const text = document.getElementById("rawText")?.value || ACTIVE_RESUME_TEXT;
+  navigator.clipboard.writeText(text).then(() => showToast("Resume copied!"));
+}
+function downloadResume() {
+  const text = document.getElementById("rawText")?.value || ACTIVE_RESUME_TEXT;
+  const blob = new Blob([text], { type: "text/plain" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "Arjun_Kumar_Resume.txt";
+  a.click();
+}
+
+// ─── Copy All ────────────────────────────────────────────────────────────────
+function copyAll() {
+  const lines = FILTERED_JOBS.map(j =>
+    `${j.match_score}% | ${j.title} @ ${j.company} (${j.location}) — ${j.url}`
+  ).join("\n");
+  navigator.clipboard.writeText(lines || "No jobs loaded.").then(() =>
+    showToast(`Copied ${FILTERED_JOBS.length} jobs to clipboard`)
+  );
+}
+
+// ─── Error / toast helpers ───────────────────────────────────────────────────
+function showError(msg) {
+  const el = document.getElementById("errorBanner");
+  el.style.display = "";
+  el.innerHTML = `<div class="error-banner"><span>⚠ ${esc(msg)}</span><button class="btn-sm btn-apply" onclick="refreshJobs()">Retry</button></div>`;
+}
+function hideError() { document.getElementById("errorBanner").style.display = "none"; }
+
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 3000);
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+// ─── Service Worker ──────────────────────────────────────────────────────────
+function registerSW() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }
+}
+</script>
+</body>
+</html>
