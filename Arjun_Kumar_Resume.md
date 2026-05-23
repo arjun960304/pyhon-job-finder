@@ -1,104 +1,95 @@
-# ARJUN KUMAR
-**Senior Software Engineer — Node.js · NestJS · Angular · AWS · 7 Years**
+# Arjun Kumar
+**Senior Backend / Full Stack Developer**
 
-📍 Delhi, India &nbsp;|&nbsp; 📞 +91 8949342705 &nbsp;|&nbsp; ✉️ kumar.arjun000511@gmail.com
-🔗 [linkedin.com/in/arjun-kumar-b4150b10b](https://linkedin.com/in/arjun-kumar-b4150b10b)
-
----
-
-## PROFESSIONAL SUMMARY
-
-Senior Full Stack Engineer with **7+ years** owning the complete delivery cycle of production SaaS and enterprise applications across **EdTech, SportsTech, and B2B** verticals. Deep expertise in backend API architecture **(Node.js, NestJS)**, Angular front-end, **AWS cloud infrastructure**, and security-first design **(JWT, RBAC)**. Delivered a **20% reduction in CI/CD pipeline time** and integrated payment, mapping, and LMS ecosystems for live, client-facing products. Known for clean architecture, fast delivery, and strong cross-team ownership.
+📞 +91 8949342705 | ✉️ kumar.arjun000511@gmail.com | 📍 Delhi, India | [LinkedIn](https://www.linkedin.com/in/arjun-kumar-b4150b10b/)
 
 ---
 
-## SKILLS
+## Professional Summary
 
-| Category | Skills |
+Senior Full Stack Developer with 7+ years of experience building highly scalable web applications and microservices using the MERN stack (MongoDB, Express.js, React.js, Node.js). Deep expertise in designing and developing RESTful APIs with Node.js and MongoDB, cloud-native deployments on AWS (EC2, Lambda, SQS), and integrating queuing systems (RabbitMQ, Kafka, AWS SQS). Proven track record across EdTech, SportsTech, and B2B SaaS platforms. Self-starter who thrives in matrix-based, non-hierarchical environments with minimal supervision.
+
+---
+
+## Skills
+
+| Area | Technologies |
 |---|---|
-| **Backend** | Node.js, NestJS, Express.js, REST API Design, TypeScript, JWT, RBAC, OAuth 2.0, Microservices |
-| **Frontend** | Angular 12+, TypeScript, RxJS, HTML5, CSS3, Responsive Design, Component Architecture |
-| **Databases** | MySQL (indexing, query optimisation), Redis (caching, sessions), MongoDB |
-| **Cloud & DevOps** | AWS (EC2, RDS, S3, Elastic Beanstalk), CI/CD Pipelines, GitHub Actions, Git |
-| **Architecture** | System Design, RESTful API Design, Scalable Microservices, Multi-tenant SaaS |
-| **Integrations** | Stripe (payments, webhooks, refunds), Google Maps SDK, Moodle Web Services |
-| **Leadership** | Technical Mentoring, Code Reviews, Cross-functional Collaboration, Agile/Scrum |
+| **Backend & APIs** | Node.js, Express.js, NestJS, REST APIs, MongoDB, MySQL, JWT, RBAC |
+| **Frontend** | React.js, Angular, TypeScript, HTML5, Responsive Design |
+| **Cloud & DevOps** | AWS (EC2, Lambda, S3, SQS), CI/CD Pipelines, GitHub Actions, Git |
+| **Queuing & Messaging** | AWS SQS, RabbitMQ, Kafka |
+| **Architecture** | Microservices, Scalable System Design, API Design & Integration |
+| **Soft Skills** | Self-starter, Adaptability, Context-switching, Team Lead, Communication |
 
 ---
 
-## WORK EXPERIENCE
+## Work Experience
 
-### Software Engineer &nbsp;·&nbsp; Quokkalabs LLP, Delhi
-**Feb 2022 – Present**
+### Software Engineer (Backend / Full Stack)
+**Quokkalabs LLP** — Delhi, India | *Feb 2022 – Present*
 
-- Architected and delivered **3+ production SaaS applications** for enterprise clients across EdTech and B2B verticals using Angular (front-end) and NestJS/Node.js (back-end), consistently meeting sprint deadlines.
-- Designed a **modular NestJS REST API framework** with JWT-based authentication and granular RBAC, enforcing least-privilege access across multi-tenant systems and eliminating unauthorised-access vulnerabilities.
-- **Cut CI/CD pipeline execution time by 20%** by parallelising build stages, automating AWS environment provisioning (EC2, RDS, S3), and adding deployment health checks — reducing release risk significantly.
-- Integrated **Stripe payment gateway end-to-end** — checkout sessions, webhook event handling, and automated refund workflows — powering secure live transactions in a SportsTech booking platform.
-- Integrated **Google Maps SDK** for location-based features (venue discovery, proximity search), directly improving user engagement.
-- Led back-end architecture decisions, introduced reusable NestJS module patterns and REST API conventions, **cutting new-feature development time** and reducing integration bugs across the team.
-- **Mentored junior engineers** through code reviews and pair programming sessions, raising team-wide code quality and reducing PR review cycles.
+- Built and maintained scalable MERN-stack applications, developing MongoDB-backed REST APIs using Node.js and Express.js to power high-traffic platforms.
+- Architected backend microservices using NestJS and Express, enabling independent deployment and scaling across services.
+- Implemented AWS SQS and RabbitMQ for asynchronous event-driven workflows, decoupling services and improving fault tolerance.
+- Deployed cloud-native applications on AWS (EC2, Lambda, S3) with CI/CD pipelines, reducing deployment time by 20%.
+- Enforced application security through JWT authentication and RBAC authorization mechanisms.
+- Integrated Stripe payment gateway, Google Maps SDK, and third-party APIs to extend platform capabilities.
 
----
-
-### Software Engineer &nbsp;·&nbsp; InsightGeeks Solutions Pvt Ltd, Delhi
-**Aug 2019 – Nov 2021**
-
-- Built and owned **4+ Angular web applications** for B2B clients, delivering pixel-accurate, fully responsive UIs with robust REST API integration.
-- Engineered a **shared Angular component library** adopted across multiple projects, eliminating duplicated UI code and cutting per-project front-end setup time by ~40%.
-- Optimised lazy-loading strategy and reduced Angular bundle sizes, **improving initial page-load performance** and measurably increasing user session depth.
-- Acted as **front-end tech lead** — defined Angular-to-API integration contracts, coordinated with back-end teams, and resolved cross-team integration blockers.
-- Improved overall UI/UX consistency by introducing shared design tokens and component standards, receiving positive client feedback across deliverables.
+**Key Achievements:**
+- 20% reduction in deployment time through CI/CD automation on AWS.
+- Improved system resilience by introducing async queuing (SQS/RabbitMQ) for critical workflows.
 
 ---
 
-### Frontend Developer &nbsp;·&nbsp; Elroute Pvt Ltd, Delhi
-**Jun 2018 – Jul 2019**
+### Software Engineer
+**InsightGeeks Solutions Pvt Ltd** — Delhi, India | *Aug 2019 – Nov 2021*
 
-- Developed Angular UI modules for enterprise applications, delivering fully responsive, **cross-browser-compatible** layouts (Chrome, Firefox, Safari, Edge).
-- Built a **reusable UI component library adopted across 3 internal products**, reducing redundant front-end development effort.
-- Owned the API integration layer — implemented data-binding, error handling, and loading state management for all front-end to back-end REST calls.
-- Worked in an Agile/Scrum environment, consistently meeting sprint delivery targets.
-
----
-
-## PROJECTS
-
-### LevelExam — EdTech Platform *(Full Stack Developer)*
-> Node.js · Express · MySQL · JWT · RBAC · Moodle · AWS EC2/RDS · CI/CD
-
-- Built a **high-throughput REST API layer** to power concurrent online exam sessions for thousands of students with low-latency response requirements.
-- Integrated **Moodle Web Services** for programmatic course management, assessment delivery, and grade synchronisation — replacing manual LMS workflows.
-- Implemented a **multi-role JWT + RBAC security model** with separate permission scopes for students, instructors, and admins, securing sensitive assessment data.
-- Deployed on AWS with **fully automated CI/CD pipelines**, enabling zero-downtime releases and rapid hotfix deployments.
+- Developed and integrated RESTful APIs with Node.js backends, enabling seamless frontend-to-backend data exchange.
+- Built reusable Angular and React components, promoting code maintainability and design consistency.
+- Optimized front-end performance, improving application responsiveness and user satisfaction metrics.
+- Collaborated in Agile sprints, adapting rapidly to shifting priorities in a dynamic project environment.
 
 ---
 
-### Edique Control Panel — IoT Device Management *(Backend Developer)*
-> NestJS · TypeScript · MySQL · AWS EC2/RDS · REST APIs
+### Frontend Developer
+**Elroute Pvt Ltd** — Delhi, India | *Jun 2018 – Jul 2019*
 
-- Architected a **NestJS + MySQL back-end** for an IoT device management platform, supporting real-time device status monitoring, bulk configuration pushes, and alert management.
-- Designed RESTful APIs for device registration, health monitoring, and administrative control, consumed by an Angular admin dashboard.
-- Provisioned **AWS infrastructure with dev/staging/prod separation**, ensuring reliable and scalable deployments.
-
----
-
-### ESEO — Sports Booking Platform *(Backend Developer)*
-> Node.js · Stripe API · MySQL · REST APIs · React (admin panel)
-
-- Architected a **Node.js booking engine with concurrency-safe slot reservation logic**, preventing double-bookings under simultaneous user load.
-- Integrated **Stripe payment gateway with full webhook lifecycle** — payment confirmation, failure handling, and automated refunds — enabling production-grade payment flows.
-- Delivered dedicated management APIs (venue, schedule, bookings) consumed by a React-based admin panel, enabling real-time operational control.
+- Developed Angular UI modules for enterprise applications with responsive layouts and cross-browser compatibility.
+- Integrated frontend modules with back-end REST APIs for seamless data flow.
 
 ---
 
-## EDUCATION
+## Key Projects
 
-**B.Tech — Computer Science** | Jaipur National University, Delhi *(2014–2018)*
+### LevelExam – EdTech Platform
+- Engineered scalable REST APIs with Node.js, Express.js, and MongoDB to power a high-volume EdTech platform.
+- Integrated AWS SQS for asynchronous content processing; secured with JWT + RBAC.
+- Deployed on AWS with CI/CD pipelines for zero-downtime releases.
+- Stack: Node.js, Express.js, MongoDB, MySQL, JWT, RBAC, AWS EC2/SQS, CI/CD
 
-**Higher Secondary (Science)** | Paramount Academy, Delhi *(2012–2014)*
+### Edique Control Panel – Admin & Device Management
+- Built backend APIs using NestJS and MySQL with device/user management microservices.
+- Integrated AWS infrastructure for scalable, reliable deployment.
+- Stack: NestJS, TypeScript, MySQL, AWS EC2/RDS, REST APIs, Angular
+
+### ESEO – Sports Booking Platform
+- Designed booking APIs in Node.js with MongoDB for a high-throughput, concurrency-safe booking system.
+- Integrated Stripe payment gateway for secure transactions; supported React-based admin panel.
+- Stack: Node.js, MongoDB, Stripe API, MySQL, REST APIs, React
 
 ---
 
-## LANGUAGES
-English *(Professional)* &nbsp;·&nbsp; Hindi *(Native)*
+## Education
+
+**B.Tech – Computer Science Engineering**
+Jaipur National University, Delhi, India | 2014 – 2018
+
+**Higher Secondary (Science)**
+Paramount Academy, Delhi, India | 2012 – 2014
+
+---
+
+## Languages
+
+English (Professional), Hindi (Native)

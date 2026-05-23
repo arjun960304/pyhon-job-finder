@@ -42,32 +42,43 @@ function classifyLocation(location, isRemote) {
 const MUST_HAVE = [
   "nestjs", "node.js", "nodejs",
   "typescript",
-  "angular",
+  "react", "angular",          // React.js now primary in resume
   "aws",
   "rest api", "rest apis",
   "jwt", "rbac",
   "mysql", "redis", "mongodb",
   "microservices",
   "ci/cd", "cicd",
-  "git",
   "express"
 ];
 
 const NICE_TO_HAVE = [
   "docker", "kubernetes", "graphql", "kafka",
-  "terraform", "react", "oauth", "rxjs",
+  "terraform", "oauth", "rxjs",
   "stripe", "saas", "system design", "api design",
-  "postgresql", "postgres", "elastic"
+  "postgresql", "postgres", "elastic",
+  "rabbitmq", "sqs", "lambda", "mern"  // new skills from updated resume
 ];
 
 const TARGET_TITLES = [
   "senior software engineer", "senior backend engineer",
   "lead backend engineer", "backend engineer",
   "full stack engineer", "full stack developer",
+  "full-stack engineer", "full-stack developer",    // hyphenated variants
   "node.js developer", "nestjs developer",
+  "mern developer", "mern stack developer",
   "tech lead", "software engineer", "senior engineer",
   "senior developer", "lead developer",
-  "engineering lead", "principal engineer", "staff engineer"
+  "engineering lead", "principal engineer", "staff engineer",
+  "backend developer", "senior full stack", "senior full-stack"
+];
+
+// Job title MUST contain one of these — hard-drops all non-engineering roles
+const REQUIRED_IN_TITLE = [
+  "engineer", "developer", "architect", "programmer",
+  "backend", "frontend", "full stack", "fullstack", "full-stack",
+  "tech lead", "technical lead", "engineering lead",
+  "cto", "vp eng", "head of eng"
 ];
 
 const EXCLUDE = [
@@ -85,12 +96,25 @@ const EXCLUDE = [
 ];
 
 function scoreJob(job) {
+  const titleLower = job.title.toLowerCase();
+
+  // ① Hard filter: title must look like an engineering/developer role
+  if (!REQUIRED_IN_TITLE.some(k => titleLower.includes(k))) {
+    return { score: 0, matched: [], missing: [] };
+  }
+
   const text = `${job.title} ${job.description} ${job.job_function || ""}`.toLowerCase();
+
+  // ② Hard filter: explicit exclusions in title+description
   if (EXCLUDE.some(k => text.includes(k))) return { score: 0, matched: [], missing: [] };
+
   const matched  = MUST_HAVE.filter(s => text.includes(s));
   const nice     = NICE_TO_HAVE.filter(s => text.includes(s));
-  const titleHit = TARGET_TITLES.some(t => job.title.toLowerCase().includes(t.split(" ")[0]));
-  const remote   = job.is_remote === true;
+
+  // ③ Fixed titleHit — check full phrase, not just first word
+  const titleHit = TARGET_TITLES.some(t => titleLower.includes(t));
+
+  const remote = job.is_remote === true;
   let score = Math.round((matched.length / MUST_HAVE.length) * 70);
   if (titleHit) score += 15;
   score += Math.min(10, nice.length * 3);
@@ -161,14 +185,15 @@ function normaliseRemotive(raw) {
 const JOBICY_QUERIES = [
   "nodejs",
   "nestjs",
-  "angular",
-  "typescript backend",
-  "full stack node",
-  "backend engineer",
+  "mern",
+  "backend",
+  "typescript",
+  "full-stack",
 ];
 
 async function fetchJobicy(query) {
-  const url = `https://jobicy.com/api/v2/remote-jobs?count=25&geo=india&tag=${encodeURIComponent(query)}`;
+  // geo=india was returning 400 — use global endpoint; location filter happens in normaliseJobicy
+  const url = `https://jobicy.com/api/v2/remote-jobs?count=25&tag=${encodeURIComponent(query)}`;
   const res = await fetch(url, { signal: AbortSignal.timeout(12000) });
   if (!res.ok) throw new Error(`Jobicy ${res.status}`);
   return res.json();
@@ -291,7 +316,7 @@ module.exports = async function handler(req, res) {
       const { score, matched, missing } = scoreJob(job);
       return { ...job, match_score: score, matched_skills: matched, missing_skills: missing };
     })
-    .filter(j => j.match_score > 0)
+    .filter(j => j.match_score >= 30)   // min 30 — must have meaningful skill overlap
     .sort((a, b) => b.match_score - a.match_score);
 
   return res.status(200).json({
